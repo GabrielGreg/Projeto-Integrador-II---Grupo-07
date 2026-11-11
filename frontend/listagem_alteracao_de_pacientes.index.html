@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recepção</title>
+</head>
+<body>
+
+<header>
+  <h1>Recepção</h1>
+  <p>Listagem, alteração e cancelamento de atendimentos</p>
+</header>
+
+<main>
+  <!-- LISTAGEM -->
+  <fieldset>
+    <legend>Pacientes</legend>
+
+    <form method="get" action="#" class="busca">
+      <label>Buscar por nome ou CPF
+        <input type="search" name="busca">
+      </label>
+      <button type="submit">Buscar</button>
+     </label>
+      <button type="submit">Adicionar</button>
+    </label>
+
+    <div class="tabela">
+      <table>
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>CPF</th>
+            <th>Chegada</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Linhas de exemplo: um servidor geraria uma por atendimento -->
+          <tr>
+            <td>Maria da Silva</td>
+            <td>123.456.789-00</td>
+            <td>20/10/2026 08:15</td>
+            <td><span class="status s-triagem">Aguardando triagem</span></td>
+            <td>
+              <a class="botao" href="?alterar=1">Alterar</a>
+              <details>
+                <summary>Cancelar</summary>
+                <form method="post" action="#">
+                  <input type="hidden" name="cancelar" value="1">
+                  <p>Cancelar este atendimento?</p>
+                  <button type="submit" class="perigo">Confirmar cancelamento</button>
+                </form>
+              </details>
+            </td>
+          </tr>
+
+          <tr>
+            <td>João Pereira</td>
+            <td>987.654.321-00</td>
+            <td>20/10/2026 08:40</td>
+            <td><span class="status s-medico">Aguardando médico</span></td>
+            <td>
+              <a class="botao" href="?alterar=2">Alterar</a>
+              <details>
+                <summary>Cancelar</summary>
+                <form method="post" action="#">
+                  <input type="hidden" name="cancelar" value="2">
+                  <p>Cancelar este atendimento?</p>
+                  <button type="submit" class="perigo">Confirmar cancelamento</button>
+                </form>
+              </details>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Ana Souza</td>
+            <td>111.222.333-44</td>
+            <td>20/10/2026 07:50</td>
+            <td><span class="status s-final">Finalizado</span></td>
+            <td class="inativo">Sem ações disponíveis</td>
+          </tr>
+
+          <tr>
+            <td>Carlos Lima</td>
+            <td>555.666.777-88</td>
+            <td>20/10/2026 09:05</td>
+            <td><span class="status s-cancel">Cancelado</span></td>
+            <td class="inativo">Sem ações disponíveis</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </fieldset>
+
+</main>
+
+</body>
+</html>

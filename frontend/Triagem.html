@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Triagem de Enfermagem</title>
+  <style>
+    :root {
+      --fundo: #eef2f4;
+      --papel: #ffffff;
+      --tinta: #1b2b34;
+      --suave: #5b6b74;
+      --linha: #cfd8dc;
+      --marca: #0b5d6b;
+      --foco: #f9a825;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--fundo);
+      color: var(--tinta);
+      font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+      line-height: 1.5;
+    }
+    header { background: var(--marca); color: #fff; padding: 1.25rem 1rem; }
+    header h1 { margin: 0; font-size: 1.5rem; }
+    header p { margin: .25rem 0 0; opacity: .85; font-size: .95rem; }
+
+    main { max-width: 960px; margin: 0 auto; padding: 1rem; }
+
+    fieldset {
+      background: var(--papel);
+      border: 1px solid var(--linha);
+      border-radius: 6px;
+      margin: 0 0 1rem;
+      padding: 1rem 1.25rem 1.25rem;
+    }
+    legend { font-weight: 700; font-size: 1.05rem; color: var(--marca); padding: 0 .4rem; }
+
+    .grade {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: .9rem 1rem;
+    }
+    .largo { grid-column: 1 / -1; }
+
+    label { display: block; font-size: .9rem; font-weight: 600; }
+    label small { font-weight: 400; color: var(--suave); }
+
+    input[type="text"], input[type="search"], input[type="date"], input[type="datetime-local"],
+    input[type="number"], select, textarea {
+      display: block;
+      width: 100%;
+      margin-top: .25rem;
+      padding: .55rem .65rem;
+      font: inherit;
+      color: inherit;
+      background: #fff;
+      border: 1px solid #90a4ae;
+      border-radius: 4px;
+    }
+    textarea { min-height: 5rem; resize: vertical; }
+    :focus-visible { outline: 3px solid var(--foco); outline-offset: 1px; }
+    input:out-of-range { border-color: #c62828; }
+
+    .marcas { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin-top: .25rem; }
+    .marcas label { font-weight: 400; display: flex; align-items: center; gap: .4rem; }
+
+    button, .botao {
+      display: inline-block;
+      font: inherit;
+      font-weight: 700;
+      font-size: .9rem;
+      padding: .6rem 1.2rem;
+      border-radius: 4px;
+      border: 2px solid var(--marca);
+      background: #fff;
+      color: var(--marca);
+      cursor: pointer;
+      text-decoration: none;
+    }
+    button[type="submit"].principal { background: var(--marca); color: #fff; }
+    button:hover, .botao:hover { filter: brightness(1.1); }
+    .acoes { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1rem; }
+
+    .busca { display: flex; gap: .75rem; align-items: end; flex-wrap: wrap; }
+    .busca label { flex: 1 1 260px; }
+
+    .tabela { overflow-x: auto; margin-top: 1rem; }
+    table { width: 100%; border-collapse: collapse; background: #fff; min-width: 640px; }
+    th, td { text-align: left; padding: .6rem .7rem; border-bottom: 1px solid var(--linha); vertical-align: middle; }
+    th { background: #e3f2f5; font-size: .9rem; }
+
+    .status { font-weight: 700; font-size: .85rem; padding: .15rem .5rem; border-radius: 3px; border: 1px solid; }
+    .s-espera { color: #8a5a00; border-color: #f9a825; background: #fff8e1; }
+    .s-triado { color: #2e7d32; border-color: #2e7d32; background: #e8f5e9; }
+
+    /* Classificação de risco */
+    .risco { display: grid; gap: .5rem; }
+    .risco label {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .6rem .9rem;
+      border: 2px solid var(--linha);
+      border-left-width: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .risco label span { font-weight: 400; color: var(--suave); }
+    .risco .vermelho { border-left-color: #c62828; }
+    .risco .laranja  { border-left-color: #ef6c00; }
+    .risco .amarelo  { border-left-color: #f9a825; }
+    .risco .verde    { border-left-color: #2e7d32; }
+    .risco .azul     { border-left-color: #1565c0; }
+    .risco label:has(input:checked) { background: #e3f2f5; border-color: var(--marca); }
+    .risco .vermelho:has(input:checked) { border-left-color: #c62828; }
+    .risco .laranja:has(input:checked)  { border-left-color: #ef6c00; }
+    .risco .amarelo:has(input:checked)  { border-left-color: #f9a825; }
+    .risco .verde:has(input:checked)    { border-left-color: #2e7d32; }
+    .risco .azul:has(input:checked)     { border-left-color: #1565c0; }
+
+    .tag { font-weight: 700; font-size: .85rem; padding-left: .5rem; border-left: 8px solid; }
+    .t-vermelho { border-color: #c62828; }
+    .t-laranja  { border-color: #ef6c00; }
+    .t-amarelo  { border-color: #f9a825; }
+    .t-verde    { border-color: #2e7d32; }
+    .t-azul     { border-color: #1565c0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Triagem de Enfermagem</h1>
+  <p>Inclusão dos dados do atendimento e classificação de risco</p>
+</header>
+
+<main>
+
+  <!-- INCLUSÃO DA TRIAGEM -->
+  <form method="post" action="#">
+
+    <!-- Vazio numa triagem nova. Ao clicar em "Triar" na fila, o servidor preenche com o número do atendimento. -->
+    <input type="hidden" name="id" value="">
+
+    <fieldset>
+      <legend>Paciente</legend>
+      <div class="grade">
+        <label class="largo">Nome completo
+          <input type="text" name="nome" required autocomplete="off">
+        </label>
+        <label>CPF
+          <input type="text" name="cpf" inputmode="numeric" maxlength="14"
+                 pattern="\d{3}\.?\d{3}\.?\d{3}-?\d{2}" placeholder="000.000.000-00" required>
+        </label>
+        <label>Data de nascimento
+          <input type="date" name="nascimento" required>
+        </label>
+        <label>Sexo
+          <select name="sexo" required>
+            <option value="">Selecione</option>
+            <option>Feminino</option>
+            <option>Masculino</option>
+            <option>Outro</option>
+          </select>
+        </label>
+        <label>Chegada
+          <input type="datetime-local" name="chegada" required>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Triagem</legend>
+      <div class="grade">
+        <label class="largo">Queixa principal
+          <textarea name="queixa" required></textarea>
+        </label>
+        <label>Dor <small>(0 a 10)</small>
+          <input type="number" name="dor" min="0" max="10" step="1">
+        </label>
+        <label>Pressão sistólica <small>(mmHg)</small>
+          <input type="number" name="pa_sis" min="40" max="300">
+        </label>
+        <label>Pressão diastólica <small>(mmHg)</small>
+          <input type="number" name="pa_dia" min="20" max="200">
+        </label>
+        <label>Freq. cardíaca <small>(bpm)</small>
+          <input type="number" name="fc" min="20" max="250">
+        </label>
+        <label>Freq. respiratória <small>(irpm)</small>
+          <input type="number" name="fr" min="4" max="80">
+        </label>
+        <label>Temperatura <small>(°C)</small>
+          <input type="number" name="temp" min="30" max="45" step="0.1">
+        </label>
+        <label>Saturação O₂ <small>(%)</small>
+          <input type="number" name="sat" min="50" max="100">
+        </label>
+        <label>Glicemia <small>(mg/dL)</small>
+          <input type="number" name="glicemia" min="10" max="800">
+        </label>
+        <label>Peso <small>(kg)</small>
+          <input type="number" name="peso" min="0.5" max="400" step="0.1">
+        </label>
+        <label class="largo">Alergias <small>(escreva "nenhuma" se não houver)</small>
+          <input type="text" name="alergias" required>
+        </label>
+        <label class="largo">Medicações em uso
+          <textarea name="medicacoes_uso"></textarea>
+        </label>
+        <div class="largo">
+          <label>Comorbidades</label>
+          <div class="marcas">
+            <label><input type="checkbox" name="comorbidade" value="hipertensao"> Hipertensão</label>
+            <label><input type="checkbox" name="comorbidade" value="diabetes"> Diabetes</label>
+            <label><input type="checkbox" name="comorbidade" value="cardiopatia"> Cardiopatia</label>
+            <label><input type="checkbox" name="comorbidade" value="asma_dpoc"> Asma / DPOC</label>
+            <label><input type="checkbox" name="comorbidade" value="renal"> Doença renal</label>
+            <label><input type="checkbox" name="comorbidade" value="gestante"> Gestante</label>
+          </div>
+        </div>
+        <label>Enfermeiro(a)
+          <input type="text" name="enfermeiro" required>
+        </label>
+        <label>COREN
+          <input type="text" name="coren" required>
+        </label>
+        <label class="largo">Observações
+          <textarea name="observacoes"></textarea>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Classificação de risco</legend>
+      <div class="risco">
+        <label class="vermelho"><input type="radio" name="risco" value="vermelho" required>
+          Vermelho <span>Emergência</span></label>
+        <label class="laranja"><input type="radio" name="risco" value="laranja">
+          Laranja <span>Muito urgente</span></label>
+        <label class="amarelo"><input type="radio" name="risco" value="amarelo">
+          Amarelo <span>Urgente</span></label>
+        <label class="verde"><input type="radio" name="risco" value="verde">
+          Verde <span>Pouco urgente</span></label>
+        <label class="azul"><input type="radio" name="risco" value="azul">
+          Azul <span>Não urgente</span></label>
+      </div>
+
+      <div class="acoes">
+        <button type="submit" class="principal">Salvar triagem</button>
+        <button type="reset">Limpar</button>
+      </div>
+    </fieldset>
+  </form>
+
+  <!-- CONSULTA -->
+  <fieldset>
+    <legend>Consulta</legend>
+
+    <form method="get" action="#" class="busca">
+      <label>Buscar por nome ou CPF
+        <input type="search" name="busca">
+      </label>
+      <button type="submit">Buscar</button>
+    </form>
+
+    <div class="tabela">
+      <table>
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>CPF</th>
+            <th>Chegada</th>
+            <th>Status</th>
+            <th>Risco</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Linhas de exemplo: um servidor geraria uma por atendimento -->
+          <tr>
+            <td>Maria da Silva</td>
+            <td>123.456.789-00</td>
+            <td>20/10/2026 08:15</td>
+            <td><span class="status s-espera">Aguardando triagem</span></td>
+            <td>-</td>
+            <td><a class="botao" href="?triar=1">Triar</a></td>
+          </tr>
+
+          <tr>
+            <td>Pedro Alves</td>
+            <td>222.333.444-55</td>
+            <td>20/10/2026 08:30</td>
+            <td><span class="status s-espera">Aguardando triagem</span></td>
+            <td>-</td>
+            <td><a class="botao" href="?triar=3">Triar</a></td>
+          </tr>
+
+          <tr>
+            <td>João Pereira</td>
+            <td>987.654.321-00</td>
+            <td>20/10/2026 08:40</td>
+            <td><span class="status s-triado">Triado</span></td>
+            <td><span class="tag t-amarelo">Amarelo</span></td>
+            <td><a class="botao" href="?alterar=2">Alterar</a></td>
+          </tr>
+
+          <tr>
+            <td>Ana Souza</td>
+            <td>111.222.333-44</td>
+            <td>20/10/2026 07:50</td>
+            <td><span class="status s-triado">Triado</span></td>
+            <td><span class="tag t-verde">Verde</span></td>
+            <td><a class="botao" href="?alterar=4">Alterar</a></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </fieldset>
+
+</main>
+
+</body>
+</html>
